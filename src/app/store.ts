@@ -10,7 +10,11 @@ export const store = configureStore({
 
 export interface Action<T, V = never> {
     type: T
-    payload?: V
+    payload: V
+}
+
+export interface EmptyAction {
+    type: ''
 }
 
 export type AppDispatch = typeof store.dispatch;
@@ -18,4 +22,4 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType,
     RootState,
     unknown,
-    Action<string, any>>;
+    Action<string, any> | EmptyAction>;

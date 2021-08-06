@@ -10,7 +10,7 @@ import DoneIcon                           from '@material-ui/icons/Done';
 import EditIcon                           from '@material-ui/icons/Edit';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { changeName }                     from 'features/game';
-import React, { ChangeEvent }             from 'react';
+import React                              from 'react';
 
 
 interface Props {

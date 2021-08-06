@@ -1,4 +1,4 @@
-import { combineReducers }     from '@reduxjs/toolkit';
+import { combineReducers } from '@reduxjs/toolkit';
 import { Action, EmptyAction } from 'app/store';
 
 type GameAction = ReturnType<typeof changeName> |
@@ -8,6 +8,7 @@ type GameAction = ReturnType<typeof changeName> |
     ReturnType<typeof changeCharacterName> |
     ReturnType<typeof changeCharacterModifier> |
     ReturnType<typeof changeCharacterInitiative> |
+    ReturnType<typeof changeActiveCharacter> |
     EmptyAction
 
 enum ActionTypes {
@@ -18,6 +19,7 @@ enum ActionTypes {
     CHANGE_CHARACTER_NAME = 'dnd-battle-tracker/game/CHANGE_CHARACTER_NAME',
     CHANGE_CHARACTER_MODIFIER = 'dnd-battle-tracker/game/CHANGE_CHARACTER_MODIFIER',
     CHANGE_CHARACTER_ROLLED_INITIATIVE = 'dnd-battle-tracker/game/CHANGE_CHARACTER_ROLLED_INITIATIVE',
+    CHANGE_ACTIVE_CHARACTER = 'dnd-battle-tracker/game/CHANGE_ACTIVE_CHARACTER',
 }
 
 export interface Game {
@@ -37,7 +39,8 @@ export interface Character extends ShortCharacter {
 
 export default combineReducers({
     name: nameReducer,
-    characters: charactersReducer
+    characters: charactersReducer,
+    activeCharacter: activeCharacterReducer,
 })
 
 function nameReducer(name: string = 'Default', action: GameAction): string {
@@ -73,15 +76,26 @@ function charactersReducer(characters: Array<Character> = [
         case ActionTypes.REMOVE_CHARACTER:
             return characters.filter(ch => ch.id !== action.payload)
         case ActionTypes.CHANGE_CHARACTER_NAME:
-            return characters.map(ch => ch.id !== action.payload.id ? ch : {...ch, name: action.payload.name})
+            return characters.map(ch => ch.id !== action.payload.id ? ch : { ...ch, name: action.payload.name })
         case ActionTypes.CHANGE_CHARACTER_MODIFIER:
-            return characters.map(ch => ch.id !== action.payload.id ? ch : {...ch, initiativeModifier: action.payload.modifier})
+            return characters.map(ch => ch.id !== action.payload.id ? ch : {
+                ...ch,
+                initiativeModifier: action.payload.modifier
+            })
         case ActionTypes.CHANGE_CHARACTER_ROLLED_INITIATIVE:
-            return characters.map(ch => ch.id !== action.payload.id ? ch : {...ch, initiative: action.payload.initiative})
+            return characters.map(ch => ch.id !== action.payload.id ? ch : {
+                ...ch,
+                initiative: action.payload.initiative
+            })
         default:
             return characters
     }
 
+}
+
+function activeCharacterReducer(id: number = 0, action: GameAction): number {
+    if (action.type !== ActionTypes.CHANGE_ACTIVE_CHARACTER) return id
+    return action.payload
 }
 
 
@@ -125,4 +139,10 @@ export const changeCharacterInitiative = (id: number, initiative: number):
     Action<typeof ActionTypes.CHANGE_CHARACTER_ROLLED_INITIATIVE, { id: number, initiative: number }> => ({
     type: ActionTypes.CHANGE_CHARACTER_ROLLED_INITIATIVE,
     payload: { id, initiative }
+})
+
+export const changeActiveCharacter = (id: number):
+    Action<typeof ActionTypes.CHANGE_ACTIVE_CHARACTER, number> => ({
+    type: ActionTypes.CHANGE_ACTIVE_CHARACTER,
+    payload: id
 })

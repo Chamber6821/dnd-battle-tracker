@@ -15,11 +15,13 @@ function CharacterList({ editing = false }: Props) {
     const characters = useAppSelector(state => state.game.characters)
     const dispatch = useAppDispatch()
 
+    const sortedCharacters = [...characters].sort((ch1, ch2) => ch2.initiative - ch1.initiative)
+
     const handleClickAdd = () => dispatch(addCharacter('', 0))
 
     return <List dense={true}>
         {
-            characters.map(ch =>
+            sortedCharacters.map(ch =>
                 <ListItem key={ch.id + ''}>
                     <CharacterItem id={ch.id} editing={editing}/>
                 </ListItem>

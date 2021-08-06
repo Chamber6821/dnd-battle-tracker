@@ -1,20 +1,21 @@
-import Grid              from '@material-ui/core/Grid';
-import IconButton        from '@material-ui/core/IconButton';
-import TextField         from '@material-ui/core/TextField';
-import Typography        from '@material-ui/core/Typography';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Grid                from '@material-ui/core/Grid';
+import IconButton          from '@material-ui/core/IconButton';
+import TextField           from '@material-ui/core/TextField';
+import Typography          from '@material-ui/core/Typography';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import DeleteForeverIcon   from '@material-ui/icons/DeleteForever';
 import {
     useAppDispatch,
     useAppSelector
-}                        from 'app/hooks';
+}                          from 'app/hooks';
 import {
     changeCharacterInitiative,
     changeCharacterModifier,
     changeCharacterName,
     Character,
     removeCharacter
-}                        from 'features/game';
-import React             from 'react';
+}                          from 'features/game';
+import React               from 'react';
 
 export interface Props {
     id: number,
@@ -22,6 +23,7 @@ export interface Props {
 }
 
 function CharacterItem({ id, editing = false }: Props) {
+    const active = useAppSelector(state => state.game.activeCharacter === id)
     const data = useAppSelector(state => state.game.characters.find(ch => ch.id === id)) as Character
     const dispatch = useAppDispatch()
 
@@ -37,6 +39,9 @@ function CharacterItem({ id, editing = false }: Props) {
             alignItems="center"
             justifyContent="space-between"
         >
+            <Grid item xs={1}>
+                {active && <ArrowForwardIosIcon/>}
+            </Grid>
             <Grid item xs={3}>
                 {
                     data.name ?
@@ -57,6 +62,7 @@ function CharacterItem({ id, editing = false }: Props) {
                 <Typography display="inline">{data.initiative}</Typography>
             </Grid>
         </Grid>
+
     )
 
     const editMode = (
